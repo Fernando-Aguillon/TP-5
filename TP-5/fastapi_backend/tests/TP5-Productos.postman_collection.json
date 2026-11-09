@@ -1,0 +1,53 @@
+{
+  "info": {
+    "name": "TP 5 - Gestor de Productos",
+    "description": "Pruebas CRUD y validaciones del backend FastAPI + SQLModel + PostgreSQL.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "productoId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Productos",
+      "item": [
+        {
+          "name": "Crear producto",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Creado (201)', () => pm.response.to.have.status(201));", "const body = pm.response.json();", "pm.collectionVariables.set('productoId', body.id);"] } }],
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Producto Postman TP5\",\n  \"categoria\": \"TEC-01\",\n  \"precio\": 0,\n  \"stock\": 8,\n  \"stock_minimo\": 3,\n  \"activo\": true\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/productos/" }
+        },
+        {
+          "name": "Listar productos",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Listado (200)', () => pm.response.to.have.status(200));", "pm.test('Respuesta es una lista', () => pm.expect(pm.response.json()).to.be.an('array'));"] } }],
+          "request": { "method": "GET", "url": "{{baseUrl}}/productos/?skip=0&limit=10" }
+        },
+        {
+          "name": "Consultar producto creado",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Encontrado (200)', () => pm.response.to.have.status(200));", "pm.test('El ID coincide', () => pm.expect(pm.response.json().id).to.eql(Number(pm.collectionVariables.get('productoId'))));"] } }],
+          "request": { "method": "GET", "url": "{{baseUrl}}/productos/{{productoId}}" }
+        },
+        {
+          "name": "Actualizar producto",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Actualizado (200)', () => pm.response.to.have.status(200));"] } }],
+          "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Producto Postman TP5 actualizado\",\n  \"categoria\": \"TEC-01\",\n  \"precio\": 125000,\n  \"stock\": 6,\n  \"stock_minimo\": 3,\n  \"activo\": true\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/productos/{{productoId}}" }
+        },
+        {
+          "name": "Nombre vacío (422)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Validación (422)', () => pm.response.to.have.status(422));"] } }],
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"   \",\n  \"categoria\": \"TEC-01\",\n  \"precio\": 100,\n  \"stock\": 1,\n  \"stock_minimo\": 0,\n  \"activo\": true\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/productos/" }
+        },
+        {
+          "name": "Eliminar producto",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Eliminado (204)', () => pm.response.to.have.status(204));"] } }],
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/productos/{{productoId}}" }
+        },
+        {
+          "name": "Consultar producto eliminado (404)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('No encontrado (404)', () => pm.response.to.have.status(404));"] } }],
+          "request": { "method": "GET", "url": "{{baseUrl}}/productos/{{productoId}}" }
+        }
+      ]
+    }
+  ]
+}

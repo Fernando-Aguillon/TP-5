@@ -1,0 +1,71 @@
+@baseUrl = http://localhost:8000
+
+### Crear producto (esperado 201)
+POST {{baseUrl}}/productos/
+Content-Type: application/json
+
+{
+  "nombre": "Teclado Aurora REST",
+  "categoria": "TEC-01",
+  "precio": 0,
+  "stock": 8,
+  "stock_minimo": 3,
+  "activo": true
+}
+
+### Listar productos (esperado 200)
+GET {{baseUrl}}/productos/?skip=0&limit=10
+
+### Consultar un producto (reemplazar 1 por un ID existente)
+GET {{baseUrl}}/productos/1
+
+### Actualizar producto (reemplazar 1 por un ID existente)
+PUT {{baseUrl}}/productos/1
+Content-Type: application/json
+
+{
+  "nombre": "Teclado Aurora REST actualizado",
+  "categoria": "TEC-01",
+  "precio": 125000,
+  "stock": 6,
+  "stock_minimo": 3,
+  "activo": true
+}
+
+### Consultar stock de un producto existente
+GET {{baseUrl}}/productos/1/stock
+
+### Baja lógica de producto existente
+PUT {{baseUrl}}/productos/1/desactivar
+
+### Rechazar nombre vacío (esperado 422)
+POST {{baseUrl}}/productos/
+Content-Type: application/json
+
+{
+  "nombre": "   ",
+  "categoria": "TEC-01",
+  "precio": 100,
+  "stock": 1,
+  "stock_minimo": 0,
+  "activo": true
+}
+
+### Rechazar precio negativo (esperado 422)
+POST {{baseUrl}}/productos/
+Content-Type: application/json
+
+{
+  "nombre": "Precio inválido REST",
+  "categoria": "TEC-01",
+  "precio": -1,
+  "stock": 1,
+  "stock_minimo": 0,
+  "activo": true
+}
+
+### Producto inexistente (esperado 404)
+GET {{baseUrl}}/productos/999999
+
+### Eliminar producto (reemplazar 1 por un ID existente; esperado 204)
+DELETE {{baseUrl}}/productos/1
